@@ -6,14 +6,14 @@
 #include <fcntl.h>
 
 struct psi {
-	int snk;
+	int *snk;
 	int target;
 	unsigned long long value_curr;
 	unsigned long long value_prev;
 	unsigned long long value_diff;
 };
 
-void psi_init(struct psi *, char *, int);
+void psi_init(struct psi *, char *, int*);
 int psi_observe(struct psi *p);
 void psi_destroy(struct psi *);
 void psi_parse(char *, unsigned long long *);

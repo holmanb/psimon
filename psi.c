@@ -72,7 +72,7 @@ void psi_update(struct psi *p, unsigned long long *n, unsigned long long *diff){
 			*diff);
 }
 
-void psi_init(struct psi *p, char *tgt, int s){
+void psi_init(struct psi *p, char *tgt, int *s){
 	p->value_curr = 0;
 	p->value_prev = 0;
 	p->value_diff = 0;
@@ -83,6 +83,10 @@ void psi_init(struct psi *p, char *tgt, int s){
 			tgt,
 			strerror(errno));
               exit(1);
+	}
+	int init=0;
+	while(++init<15){
+		write(*p->snk,"0\n",3);
 	}
 }
 
@@ -112,13 +116,13 @@ int psi_observe(struct psi *p){
 	if(buf1[0] != '\0'){
 		psi_parse(buf1, &val);
 		psi_update(p, &val, &diff);
-		int n = snprintf(buf2, 512, "%lld\n", diff);
-		debug("buffer length=%d buf2=[%lld]=[%s], \n", n, diff, buf2); 
+		snprintf(buf2, 512, "%lld\n", diff);
 	} else {
+		// should have an "always on error message here probably"
 		debug("%s", "empty buffer?  the heck?\n");
 	}
 
-	write(p->snk, buf2, strlen(buf2+1));
+	write(*p->snk, buf2, (strlen(buf2)+1));
 	return 0;
 }
 void psi_destroy(struct psi *p){

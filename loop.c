@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "psi.h"
+#include "debug.h"
 #include "loop.h"
 #include "input.h"
 #include "plot.h"
@@ -56,7 +57,7 @@ loop(struct plot *p, struct psi *ps, long ms)
 
 	struct timespec sleep = {
 		.tv_sec = 0,
-		.tv_nsec = ms * 100000,
+		.tv_nsec = ms * 1000000,
 	};
 
 	install_signal_handler();
