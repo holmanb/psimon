@@ -27,7 +27,8 @@ $(PSI_OBJ_ALL): %.o: %.c
 	$(CC) -I$(CURDIR)/$(SUBDIRS) $(CC_FLAGS) $(SHARED_FLAGS) -c $< -o $@ 
 
 .PHONY: plot
-plot: $(PLOT_OBJ_ALL) $(CC) $(CC_FLAGS) $(PLOT_OBJ_ALL) -o $(PLOT)
+plot: $(PLOT_OBJ_ALL) 
+	$(CC) $(CC_FLAGS) $(PLOT_OBJ_ALL) -o $(PLOT)
 
 .PHONY: psimon
 psimon: 

@@ -17,6 +17,7 @@ static int proceed = 1;
 static void
 handle_sigint(int _)
 {
+	(void)_;
 	proceed = 0;
 }
 
