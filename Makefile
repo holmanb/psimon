@@ -15,30 +15,24 @@ PSI_OBJ_ALL = $(PSI_SRC:.c=.o)
 PSI_OBJ := $(filter-out main.o,$(PSI_OBJ_ALL))
 
 
-all: $(PLOT_OBJ_ALL) $(PSI_OBJ_ALL)
+all: $(PLOT_OBJ_ALL) $(PSI_OBJ_ALL) 
 .PHONY : all
 
 .PHONY: $(PLOT_OBJ_ALL)
 $(PLOT_OBJ_ALL): %.o: %.c
-	$(CC) -c $< -o $@ 
+	$(CC) $(CC_FLAGS) $(SHARED_FLAGS) -c $< -o $@ 
 
 .PHONY: $(PSI_OBJ_ALL)
 $(PSI_OBJ_ALL): %.o: %.c
-	$(CC) -I$(CURDIR)/$(SUBDIRS) -c $< -o $@ 
-	-rm -f $(CURDIR)/$(SUBDIRS)/main.o
+	$(CC) -I$(CURDIR)/$(SUBDIRS) $(CC_FLAGS) $(SHARED_FLAGS) -c $< -o $@ 
 
 .PHONY: plot
-plot: $(PLOT_OBJ_ALL)
-	$(CC) $(CC_FLAGS) $(PLOT_OBJ_ALL) -o $(PLOT)
-	-rm -f $(CURDIR)/$(SUBDIRS)/main.o
-
+plot: $(PLOT_OBJ_ALL) $(CC) $(CC_FLAGS) $(PLOT_OBJ_ALL) -o $(PLOT)
 
 .PHONY: psimon
-#psimon: $(PSI_OBJ_ALL)
-psimon: #$(PSI_OBJ_ALL)
-	#$(CC) $(CC_FLAGS) $(PLOT_OBJ_ALL) -o $(PLOT)
+psimon: 
 	-rm -f $(CURDIR)/$(SUBDIRS)/main.o
-	$(CC) -I$(CURDIR)/$(SUBDIRS) $(CC_FLAGS) $(wildcard $(CURDIR)/$(SUBDIRS)/*.o) $(PSI_OBJ_ALL) -o $(PSI)
+	$(CC) -I$(CURDIR)/$(SUBDIRS) $(CC_FLAGS) $(shell echo '$(CURDIR)/$(SUBDIRS)/*.o') $(PSI_OBJ_ALL) -o $(PSI)
 
 .PHONY: clean 
 clean:
