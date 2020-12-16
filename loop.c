@@ -30,6 +30,8 @@ install_signal_handler(void)
 	sigaction(SIGINT, &sigact, NULL);
 }
 
+// TODO: add support for drawing multiple values simultaneously
+// this functionality can be tested w/plot by specifying multiple files (-i) with values in them
 void draw(struct plot *p){
 	size_t i;
 	if (!pdtry_all_buffers(p, 1)) {

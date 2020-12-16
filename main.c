@@ -6,30 +6,37 @@
 #include "psi.h"
 #include <unistd.h>
 
+#define DYNAMIC_AXIS_TMP 1
+
 int
 main(int argc, char **argv)
 {
-	char *prog = argv[0];	
-	char* argv_fake[] = { prog, "-f" };
+
+	// TODO fix whatever bug is limiting the plot library from drawing over 255
+	char* argv_fake[] = { "psimon", "-f", "-b", "0:255"};
 	struct plot pl = { 0 };
-	int lc = parse_opts(&pl, 2, argv_fake);
 	plot_init(&pl);
+	int lc = parse_opts(&pl, sizeof(argv_fake)/sizeof(argv_fake[0]) - 2 * DYNAMIC_AXIS_TMP, argv_fake);
 
 	int f[2];
 	if (pipe(f)){
-		printf("can't allocate anonymous pipe\n");
-		exit(1);
+		die("%s", "can't allocate anonymous pipe\n");
 	}
 	FILE* fp = fdopen(f[0], "r");
 	if(fp == NULL) {
-		debug("%s", "problem opening pipe\n");
+		die("%s", "problem opening pipe\n");
 	}
 
 	if (pl.datasets == 0) {
 		plot_add(&pl, fp, lc);
 	}
 
-	// TODO: plumb some options for this
+	/* TODO: plumb some options: 
+	* - select between memory/io/cpu  (or maybe support them simultaniously)
+	* - different cgroups
+	* - define colors
+	* - configure speed/timestep?
+	*/
 	struct psi ps = { 0 };
 	psi_init(&ps, "/proc/pressure/cpu", &f[1]);
 
