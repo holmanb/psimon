@@ -103,7 +103,7 @@ int psi_observe(struct psi *p){
 
 	o = lseek(p->target, 0, SEEK_SET);
 	if(o == -1){
-		die("error reading stats %s\n",
+		die("seeking %s\n",
 			strerror(errno));
 	}
 	r = read(p->target, buf1, STRSIZE);
@@ -120,7 +120,12 @@ int psi_observe(struct psi *p){
 	} else {
 		die("%s", "empty buffer?  the heck?\n");
 	}
-
+	debug("writing buffer [%s] len[%zu]     \n",
+			buf2,
+			strlen(buf2)+1);
+	if(strlen(buf2) == 0){
+		die("%s","what happened here?\n");
+	}
 	write(*p->snk, buf2, (strlen(buf2)+1));
 	return 0;
 }

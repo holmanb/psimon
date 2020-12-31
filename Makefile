@@ -1,5 +1,6 @@
 CC = gcc
-CC_FLAGS = -g -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wshadow -Wconversion -fPIC -lm
+CC_FLAGS = -g -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wshadow -Wconversion -fPIC -lm -fstack-protector-strong -Wformat -Werror=format-security -fPIE#-fstack-usage  -Wstack-protector #-Wstack-usage
+
 SHARED_FLAGS = -shared
 SUBDIRS = deps/plot/src
 

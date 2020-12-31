@@ -6,17 +6,17 @@
 #include "psi.h"
 #include <unistd.h>
 
-#define DYNAMIC_AXIS_TMP 1
+#define DYNAMIC_AXIS_TMP 0
 
 int
 main(int argc, char **argv)
 {
 
 	// TODO fix whatever bug is limiting the plot library from drawing over 255
-	char* argv_fake[] = { "psimon", "-f", "-b", "0:255"};
-	struct plot pl = { 0 };
-	plot_init(&pl);
-	int lc = parse_opts(&pl, sizeof(argv_fake)/sizeof(argv_fake[0]) - 2 * DYNAMIC_AXIS_TMP, argv_fake);
+	char* argv_fake[] = { "psimon", "-f", "-b", "0:256"};
+	struct plot *pl = NULL;
+	pl = plot_init();
+	int lc = parse_opts(pl, sizeof(argv_fake)/sizeof(argv_fake[0]) - (2 * DYNAMIC_AXIS_TMP), argv_fake);
 
 	int f[2];
 	if (pipe(f)){
@@ -27,8 +27,8 @@ main(int argc, char **argv)
 		die("%s", "problem opening pipe\n");
 	}
 
-	if (pl.datasets == 0) {
-		plot_add(&pl, fp, lc);
+	if (pl->datasets == 0) {
+		plot_add(pl, fp, lc);
 	}
 
 	/* TODO: plumb some options: 
@@ -41,11 +41,11 @@ main(int argc, char **argv)
 	psi_init(&ps, "/proc/pressure/cpu", &f[1]);
 
 	set_input_buffer_size(8);
-	loop(&pl, &ps, pl.follow_rate);
+	loop(pl, &ps, pl->follow_rate);
 	
 
 	psi_destroy(&ps);
-	plot_destroy(&pl);
+	plot_destroy(pl);
 
 	fflush(stdout);
 

@@ -36,8 +36,8 @@ void draw(struct plot *p){
 	size_t i;
 	if (!pdtry_all_buffers(p, 1)) {
 		for (i = 0; i < p->datasets; i++) {
-			if (feof(p->data[i].src.src)) {
-				clearerr(p->data[i].src.src);
+			if (feof(p->data[i]->src->src)) {
+				clearerr(p->data[i]->src->src);
 			}
 		}
 	}
@@ -53,13 +53,14 @@ loop(struct plot *p, struct psi *ps, long ms)
 {
 	unsigned int height = p->height;
 
-	if (p->x_label.every && p->x_label.side) {
-		height += p->x_label.side == 3 ? 2 : 1;
+	if (p->x_label->every && p->x_label->side) {
+		height += p->x_label->side == 3 ? 2 : 1;
 	}
 
 	struct timespec sleep = {
 		.tv_sec = 0,
-		.tv_nsec = ms * 1000000,
+		.tv_nsec = 10000000,
+
 	};
 
 	install_signal_handler();
