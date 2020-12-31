@@ -124,10 +124,10 @@ int psi_observe(struct psi *p){
 	if(strlen(buf2) == 0){
 		die("%s","what happened here?\n");
 	}
-	fprintf(stdout, "[%s]", buf2);
+	debug("[%s]", buf2);
 	int ret=0;
 	ret = fprintf(p->snk, "%s\n", buf2);
-	fprintf(stdout, "return value of [%d]\n", ret);
+	debug("return value of [%d]\n", ret);
 
 	fflush(p->snk);
 	return 0;
