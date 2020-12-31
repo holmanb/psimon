@@ -22,13 +22,14 @@ main(int argc, char **argv)
 	if (pipe(f)){
 		die("%s", "can't allocate anonymous pipe\n");
 	}
-	FILE* fp = fdopen(f[0], "r");
-	if(fp == NULL) {
+	FILE* fpr = fdopen(f[0], "r");
+	FILE* fpw = fdopen(f[1], "w");
+	if(fpr == NULL || fpw == NULL) {
 		die("%s", "problem opening pipe\n");
 	}
 
 	if (pl->datasets == 0) {
-		plot_add(pl, fp, lc);
+		plot_add(pl, fpr, lc);
 	}
 
 	/* TODO: plumb some options: 
@@ -38,7 +39,7 @@ main(int argc, char **argv)
 	* - configure speed/timestep?
 	*/
 	struct psi ps = { 0 };
-	psi_init(&ps, "/proc/pressure/cpu", &f[1]);
+	psi_init(&ps, "/proc/pressure/cpu", fpw);
 
 	set_input_buffer_size(8);
 	loop(pl, &ps, pl->follow_rate);

@@ -74,7 +74,7 @@ void psi_update(struct psi *p, unsigned long long *n, unsigned long long *diff){
 			*diff);
 }
 
-void psi_init(struct psi *p, char *tgt, int *s){
+void psi_init(struct psi *p, char *tgt, FILE *s){
 	p->value_curr = 0;
 	p->value_prev = 0;
 	p->value_diff = 0;
@@ -87,7 +87,7 @@ void psi_init(struct psi *p, char *tgt, int *s){
 	}
 	int init=0;
 	while(++init<15){
-		write(*p->snk,"0\n",3);
+		fprintf(p->snk,"%s", "0\n");
 	}
 }
 
@@ -96,7 +96,6 @@ int psi_observe(struct psi *p){
 	debug("%s","\n");
 	char buf1[STRSIZE] = "";
 	char buf2[STRSIZE] = "";
-	//buf1[0]=buf2[0]='\0';
 	unsigned long long val, diff;
 	ssize_t r=0; 
 	off_t o=0;
@@ -111,22 +110,26 @@ int psi_observe(struct psi *p){
 		die("error reading stats %s\n",
 			strerror(errno));
 	} else if (0 == r){
-		die("%s"," read in zero bytes from file, is this normal?\n");
+		die("%s"," read in zero bytes from file\n");
 	}
 	if(buf1[0] != '\0'){
 		psi_parse(buf1, &val);
 		psi_update(p, &val, &diff);
-		snprintf(buf2, STRSIZE, "%lld\n", diff);
+		snprintf(buf2, STRSIZE, "%lld", diff);
 	} else {
 		die("%s", "empty buffer?  the heck?\n");
 	}
-	debug("writing buffer [%s] len[%zu]     \n",
-			buf2,
-			strlen(buf2)+1);
+	debug("writing buffer [%s]\n",
+			buf2);
 	if(strlen(buf2) == 0){
 		die("%s","what happened here?\n");
 	}
-	write(*p->snk, buf2, (strlen(buf2)+1));
+	fprintf(stdout, "[%s]", buf2);
+	int ret=0;
+	ret = fprintf(p->snk, "%s\n", buf2);
+	fprintf(stdout, "return value of [%d]\n", ret);
+
+	fflush(p->snk);
 	return 0;
 }
 void psi_destroy(struct psi *p){
