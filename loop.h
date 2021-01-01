@@ -4,5 +4,5 @@ struct plot;
 struct psi;
 
 void draw(struct plot *);
-void loop(struct plot *, struct psi *, long);
+void loop(struct plot *, struct psi **, long);
 #endif

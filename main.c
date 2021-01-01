@@ -16,44 +16,63 @@
 #define Y_LABEL  (MAX_HEIGHT-1) > Y_LABEL_REQUESTED ? Y_LABEL_REQUESTED : (MAX_HEIGHT-1)
 
 
+/* TODO: plumb some options: 
+* - select between memory/io/cpu  (or maybe support them simultaniously)
+* - different cgroups
+* - define colors
+* - configure speed/timestep?
+* - configure y axis?
+*/
+
 int
 main(int argc, char **argv)
 {
-	char b[32];
 	printf("title\n");
+
+	char *filenames[] = { "/tmp/file1", "/tmp/file2", "/tmp/file3" };
+
+	char b[32];
 	snprintf(b, 32, "0:%d", Y_LABEL);
 	debug("Y axis is size: %s\n", b);
 	char* argv_fake[] = { "psimon", "-b", b, "-m", \
-		 "-c", "r", "-i", TMPFILE1, \
+		 "-c", "r", "-i", filenames[0], \
+		 "-c", "b", "-i", filenames[1], \
+		 "-c", "c", "-i", filenames[2], \
 		 "-f"};
-//		 "-c", "b", "-i", TMPFILE2, \
-
 
 	struct plot pl = { 0 };
 
-	FILE * file1 = fopen(TMPFILE1, "w");
-	FILE * file2 = fopen(TMPFILE2, "w");
+	FILE ** temp_files = calloc(16, sizeof(FILE *));
+	if(temp_files == NULL) {die("%s", "couldn't allocate mem\n");}
+	temp_files[0] = fopen(filenames[0], "w");
+	temp_files[1] = fopen(filenames[1], "w");
+	temp_files[2] = fopen(filenames[2], "w");
 
 	plot_init(&pl);
 	parse_opts(&pl, sizeof(argv_fake)/sizeof(argv_fake[0]) - (2 * DYNAMIC_AXIS_TMP), argv_fake);
 
+	struct psi ps1 = { 0 };
+	struct psi ps2 = { 0 };
+	struct psi ps3 = { 0 };
 
-	/* TODO: plumb some options: 
-	* - select between memory/io/cpu  (or maybe support them simultaniously)
-	* - different cgroups
-	* - define colors
-	* - configure speed/timestep?
-	*/
-	struct psi ps = { 0 };
-	psi_init(&ps, "/proc/pressure/cpu", file1);
-	//psi_init(&ps, "/proc/pressure/io", file2);
-	//psi_init(&ps, "/proc/pressure/memory", file3);
+	psi_init(&ps1, "/proc/pressure/cpu", temp_files[0]);
+	psi_init(&ps2, "/proc/pressure/io", temp_files[1]);
+	psi_init(&ps3, "/proc/pressure/memory", temp_files[2]);
+
+	struct psi ** metrics = NULL;
+	metrics = calloc(3, sizeof(struct psi *));
+	if(metrics == NULL) {die("%s", "couldn't allocate mem\n");}
+
+	metrics[0] = &ps1;
+	metrics[1] = &ps2;
+	metrics[2] = &ps3;
 
 	set_input_buffer_size(8);
-	loop(&pl, &ps, pl.follow_rate);
+	loop(&pl, metrics, pl.follow_rate);
 
-
-	psi_destroy(&ps);
+	psi_destroy(&ps1);
+	psi_destroy(&ps2);
+	psi_destroy(&ps3);
 	plot_destroy(&pl);
 
 	fflush(stdout);

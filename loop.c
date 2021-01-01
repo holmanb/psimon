@@ -49,7 +49,7 @@ void draw(struct plot *p){
 }
 
 void
-loop(struct plot *p, struct psi *ps, long ms)
+loop(struct plot *p, struct psi **ps, long ms)
 {
 	unsigned int height = p->height;
 
@@ -68,7 +68,9 @@ loop(struct plot *p, struct psi *ps, long ms)
 	printf("\033[?25l");
 
 	while (proceed) {
-		psi_observe(ps);
+		psi_observe(ps[0]);
+		psi_observe(ps[1]);
+		psi_observe(ps[2]);
 		draw(p);
 		nanosleep(&sleep, NULL);
 	}
