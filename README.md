@@ -43,4 +43,5 @@ currently `psimon` doesn't require any arguments and shows PSI counter values in
 - randomized file names in /tmp
 - various TODO cleanup items in codebase
 - add units
+- add averages
 - fix y axis color issue (see ![upstream issue](https://github.com/annacrombie/plot/issues/3))
