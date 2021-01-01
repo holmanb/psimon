@@ -8,7 +8,7 @@
                                 __LINE__, __func__, __VA_ARGS__); } while (0)
 
 #define die(fmt, ...) \
-        do { if (DEBUG) fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, \
+        do { fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, \
                                 __LINE__, __func__, __VA_ARGS__); \
 				exit(1);} while (0)
 #endif

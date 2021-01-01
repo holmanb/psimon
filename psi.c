@@ -25,15 +25,16 @@ void psi_parse(char *s, unsigned long long *n){
 	// grab "some" line for io/memory
 	char *endptr, *b1, *b2, *b3;
 	unsigned long long val;
-
+	debug("parsing value from:\n[%s]\n",
+			s);
 	b1 = strtok(s, "\n");
-	//debug("b1=[%s]\n",b1);
+	debug("b1=[%s]\n",b1);
 
 	b2 = strtok(b1, "l");
-	//debug("b2=[%s]\n",b2);
+	debug("b2=[%s]\n",b2);
 
 	b3 = strtok(NULL, "=");
-	//debug("b3=[%s]\n", b3);
+	debug("b3=[%s]\n", b3);
 	
 
 	errno = 0;
@@ -49,13 +50,8 @@ void psi_parse(char *s, unsigned long long *n){
 	}
 
 	debug("val=%lld\n",val);
-	if(val){
-		*n = val;
-		return;
-	}
-	die("error parsing value %s from %s\n", 
-			b2, 
-			s);
+	*n = val;
+	return;
 }
 
 void psi_update(struct psi *p, unsigned long long *n, unsigned long long *diff){
@@ -120,7 +116,7 @@ int psi_observe(struct psi *p){
 	if(strlen(buf2) == 0){
 		die("%s","what happened here?\n");
 	}
-	debug("[%s]", buf2);
+	debug("[%s]\n", buf2);
 	int ret=0;
 	ret = fprintf(p->snk, "%s\n", buf2);
 	debug("return value of [%d]\n", ret);
