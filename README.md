@@ -2,7 +2,6 @@
 
 monitoring utility for pressure stall information
 
-
 # What is Pressure Stall Information?
 
 > The “some” line indicates the share of time in which at least some tasks are stalled on a given resource.
@@ -14,16 +13,12 @@ Want to know more? You can read more on ![kernel.org](https://www.kernel.org/doc
 
 ## Runtime Requirements
 
-Kernel must support psi (`CONFIG_PSI=y`), which requires at least linux 4.20
-
+Kernel must support psi (must be built with `CONFIG_PSI=y`), which requires at least linux 4.20
 
 ## Build Requirements
-
-`git`
-
-`gcc`
-
-`make`
+```
+git gcc make
+```
 
 
 ## Build Instructions
@@ -35,5 +30,18 @@ make
 make psimon
 ```
 
+## Usage
+currently `psimon` doesn't require any arguments and shows PSI counter values in realtime
+
+![](docs/psimon_sample.png)
 
 
+## Future Work
+- add cgroup support
+- parse "full" pressure counters for io && memory
+- add flags for selecting memory, io, or cpu
+- randomized file names in /tmp
+- various TODO cleanup items in codebase
+- add units
+- add averages
+- fix y axis color issue (see ![upstream issue](https://github.com/annacrombie/plot/issues/3))
