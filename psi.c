@@ -85,10 +85,6 @@ void psi_init(struct psi *p, char *tgt, FILE *s){
 			tgt,
 			strerror(errno));
 	}
-	int init=0;
-	while(++init<15){
-		fprintf(p->snk,"%s", "0\n");
-	}
 }
 
 
