@@ -12,7 +12,7 @@
 #define TMPFILE1 "/tmp/file1"
 #define TMPFILE2 "/tmp/file2"
 
-#define Y_LABEL_REQUESTED 1024
+#define Y_LABEL_REQUESTED 2048
 #define Y_LABEL  (MAX_HEIGHT-1) > Y_LABEL_REQUESTED ? Y_LABEL_REQUESTED : (MAX_HEIGHT-1)
 
 
@@ -27,22 +27,21 @@
 int
 main(int argc, char **argv)
 {
-	printf("\n    psimon               ");
-
-	printf("    cpu=red ");
-	printf("    io=blue ");
-	printf("    mem=yell \n\n");
+	printf("\n    psimon                   cpu=red     io=blue     mem=yell \n\n");
 
 	char *filenames[] = { "/tmp/file1", "/tmp/file2", "/tmp/file3" };
 
 	char b[32];
 	snprintf(b, 32, "0:%d", Y_LABEL);
 	debug("Y axis is size: %s\n", b);
-	char* argv_fake[] = { "psimon", "-b", b, "-m", \
-		 "-c", "r", "-i", filenames[0], \
-		 "-c", "b", "-i", filenames[1], \
-		 "-c", "y", "-i", filenames[2], \
-		 "-f"};
+	char* argv_fake[] = {
+		"psimon", \
+		"-m", \
+		"-c", "r", "-i", filenames[0], \
+		"-c", "b", "-i", filenames[1], \
+		"-c", "y", "-i", filenames[2], \
+		"-f"};
+//		"-b", b, \
 
 	struct plot pl = { 0 };
 
@@ -73,6 +72,9 @@ main(int argc, char **argv)
 
 	set_input_buffer_size(8);
 	loop(&pl, metrics, pl.follow_rate);
+
+	free(metrics);
+	free(temp_files);
 
 	psi_destroy(&ps1);
 	psi_destroy(&ps2);
