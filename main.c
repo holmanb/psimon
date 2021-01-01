@@ -27,7 +27,11 @@
 int
 main(int argc, char **argv)
 {
-	printf("title\n");
+	printf("\n    psimon               ");
+
+	printf("    cpu=red ");
+	printf("    io=blue ");
+	printf("    mem=yell \n\n");
 
 	char *filenames[] = { "/tmp/file1", "/tmp/file2", "/tmp/file3" };
 
@@ -37,7 +41,7 @@ main(int argc, char **argv)
 	char* argv_fake[] = { "psimon", "-b", b, "-m", \
 		 "-c", "r", "-i", filenames[0], \
 		 "-c", "b", "-i", filenames[1], \
-		 "-c", "c", "-i", filenames[2], \
+		 "-c", "y", "-i", filenames[2], \
 		 "-f"};
 
 	struct plot pl = { 0 };
