@@ -1,5 +1,5 @@
 CC = gcc
-CC_FLAGS = -g -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wshadow -Wconversion -fPIC -lm -fstack-protector-strong -Wformat -Werror=format-security -fPIE#-fstack-usage  -Wstack-protector #-Wstack-usage
+CC_FLAGS = -g -pedantic -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wshadow  -fPIC -lm -fstack-protector-strong -Wformat -Werror=format-security -fPIE#-Wconversion -fstack-usage  -Wstack-protector #-Wstack-usage
 
 SHARED_FLAGS = -shared
 SUBDIRS = deps/plot/src
@@ -16,7 +16,7 @@ PSI_OBJ_ALL = $(PSI_SRC:.c=.o)
 PSI_OBJ := $(filter-out main.o,$(PSI_OBJ_ALL))
 
 
-all: $(PLOT_OBJ_ALL) $(PSI_OBJ_ALL) 
+all: $(PLOT_OBJ_ALL) $(PSI_OBJ_ALL) psimon
 .PHONY : all
 
 .PHONY: $(PLOT_OBJ_ALL)
