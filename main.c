@@ -5,6 +5,7 @@
 #include "plot.h"
 #include "psi.h"
 #include <unistd.h>
+#include "opts_psi.h"
 
 #define DYNAMIC_AXIS_TMP 0
 
@@ -79,6 +80,7 @@ main(int argc, char **argv)
 	psi_destroy(&ps1);
 	psi_destroy(&ps2);
 	psi_destroy(&ps3);
+
 	plot_destroy(&pl);
 
 	fflush(stdout);
