@@ -51,6 +51,7 @@ void draw(struct plot *p){
 void
 loop(struct plot *p, struct psi **ps, long ms)
 {
+	int i=0;
 	unsigned int height = p->height;
 
 	if (p->x_label.every && p->x_label.side) {
@@ -68,9 +69,11 @@ loop(struct plot *p, struct psi **ps, long ms)
 	printf("\033[?25l");
 
 	while (proceed) {
-		psi_observe(ps[0]);
-		psi_observe(ps[1]);
-		psi_observe(ps[2]);
+		for(i=0; i<NUM_METRICS; i++){
+			if(ps[i]->is_active){
+				psi_observe(ps[i]);
+			}
+		}
 		draw(p);
 		nanosleep(&sleep, NULL);
 	}

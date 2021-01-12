@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define STRSIZE 512 
+#define STRSIZE 512
 
 /* sample string:
  * some avg10=0.00 avg60=0.00 avg300=0.00 total=33239701
@@ -20,13 +20,17 @@
  * for now only parsing the "some" string and returning the total
  * TODO - add support for collecting "total" blocked counters
  */
-void psi_parse(char *s, unsigned long long *n){
+void parse_some(char *s, unsigned long long *some){
+	return;
+}
+
+void psi_parse(char *s, unsigned long long *some, unsigned long long *full){
 
 	// grab "some" line for io/memory
 	char *endptr, *b1, *b2, *b3;
 	unsigned long long val;
-	debug("parsing value from:\n[%s]\n",
-			s);
+	debug("parsing value from:\n[%s]\n",s);
+
 	b1 = strtok(s, "\n");
 	debug("b1=[%s]\n",b1);
 
@@ -35,7 +39,6 @@ void psi_parse(char *s, unsigned long long *n){
 
 	b3 = strtok(NULL, "=");
 	debug("b3=[%s]\n", b3);
-	
 
 	errno = 0;
 	val = strtoull(b3, &endptr, 10);
@@ -50,12 +53,11 @@ void psi_parse(char *s, unsigned long long *n){
 	}
 
 	debug("val=%lld\n",val);
-	*n = val;
+	*some = val;
 	return;
 }
 
 void psi_update(struct psi *p, unsigned long long *n, unsigned long long *diff){
-	// don't print initial value as diff value
 	static int init = 1;
 	if(init){
 		init = 0;
@@ -71,6 +73,8 @@ void psi_update(struct psi *p, unsigned long long *n, unsigned long long *diff){
 }
 
 void psi_init(struct psi *p, char *tgt, FILE *s){
+
+	p->is_active = 1;
 	p->value_curr = 0;
 	p->value_prev = 0;
 	p->value_diff = 0;
@@ -83,47 +87,39 @@ void psi_init(struct psi *p, char *tgt, FILE *s){
 	}
 }
 
-
 int psi_observe(struct psi *p){
-	debug("%s","\n");
 	char buf1[STRSIZE] = "";
 	char buf2[STRSIZE] = "";
-	unsigned long long val, diff;
-	ssize_t r=0; 
-	off_t o=0;
+	unsigned long long some, full, diff;
+	ssize_t r = 0;
+	off_t o = 0;
 
 	o = lseek(p->target, 0, SEEK_SET);
 	if(o == -1){
-		die("seeking %s\n",
-			strerror(errno));
+		die("seeking %s\n",strerror(errno));
 	}
 	r = read(p->target, buf1, STRSIZE);
 	if (-1 == r){
-		die("error reading stats %s\n",
-			strerror(errno));
+		die("error reading stats %s\n",strerror(errno));
 	} else if (0 == r){
 		die("%s"," read in zero bytes from file\n");
 	}
 	if(buf1[0] != '\0'){
-		psi_parse(buf1, &val);
-		psi_update(p, &val, &diff);
+		psi_parse(buf1, &some, &full);
+		psi_update(p, &some, &diff);
 		snprintf(buf2, STRSIZE, "%lld", diff);
 	} else {
-		die("%s", "empty buffer?  the heck?\n");
+		die("%s", "unexpected empty buffer\n");
 	}
-	debug("writing buffer [%s]\n",
-			buf2);
 	if(strlen(buf2) == 0){
-		die("%s","what happened here?\n");
+		die("%s","parsing error\n");
 	}
-	debug("[%s]\n", buf2);
-	int ret=0;
-	ret = fprintf(p->snk, "%s\n", buf2);
-	debug("return value of [%d]\n", ret);
+	fprintf(p->snk, "%s\n", buf2);
 
 	fflush(p->snk);
 	return 0;
 }
+
 void psi_destroy(struct psi *p){
 	close(p->target);
 }

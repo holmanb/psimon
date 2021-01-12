@@ -1,18 +1,20 @@
 #ifndef _PSI_OPTS_H
 #define _PSI_OPTS_H
 
+#define CPU 1
+#define IO  2
+#define MEM 4
+#define ALL_RESOURCES (CPU|IO|MEM)
+
+#define SOME 1
+#define FULL 2
+#define ALL_COUNTER_TYPES (SOME|FULL)
+
+
+
 struct opts {
 	char resources;
-	// MEM | CPU | IO
-	
-//	char mem;
-//	char cpu;
-//	char io;
-
-	// SOME | FULL
 	char counter_types;
-//	char some;
-//	char full;
 };
 
 int parse_opts_psi(struct opts *, int argc, char **argv);
