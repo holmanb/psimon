@@ -24,7 +24,7 @@ int
 main(int argc, char **argv)
 {
 	int i;
-	struct opts o;
+	struct opts o = {0};
 	struct psi ** metrics;
 	struct plot pl = { 0 };
 	FILE ** temp_files;
@@ -62,9 +62,6 @@ main(int argc, char **argv)
 	for(i=0; i< NUM_METRICS; i++){
 		metrics[i]->is_active = 0;
 	}
-	// INIT
-	o.resources = 0;
-	o.counter_types = 0;
 
 	parse_opts_psi(&o, argc, argv);
 
