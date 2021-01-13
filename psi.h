@@ -7,13 +7,16 @@
 
 #define NUM_METRICS 5
 
+struct counter {
+	unsigned long long value_curr;
+	unsigned long long value_prev;
+	unsigned long long value_diff;
+};
 struct psi {
 	char is_active; // toggled depending on user input
 	int target;
 	FILE *snk;
-	unsigned long long value_curr;
-	unsigned long long value_prev;
-	unsigned long long value_diff;
+	struct counter counter;
 };
 
 void psi_init(struct psi *, char *, FILE*);

@@ -62,22 +62,22 @@ void psi_update(struct psi *p, unsigned long long *n, unsigned long long *diff){
 	if(init){
 		init = 0;
 		*diff = 0;
-		p->value_curr = *n;
+		p->counter.value_curr = *n;
 		return;
 	}
-	*diff = *n - p->value_curr;
-	p->value_curr = *n;
+	*diff = *n - p->counter.value_curr;
+	p->counter.value_curr = *n;
 	debug("\ncurr %lld \ndiff %lld \n",
-			p->value_curr,
+			p->counter.value_curr,
 			*diff);
 }
 
 void psi_init(struct psi *p, char *tgt, FILE *s){
 
 	p->is_active = 1;
-	p->value_curr = 0;
-	p->value_prev = 0;
-	p->value_diff = 0;
+	p->counter.value_curr = 0;
+	p->counter.value_prev = 0;
+	p->counter.value_diff = 0;
 	p->snk = s;
 	p->target = open(tgt, O_RDONLY);
 	if (p->target < 0) {
